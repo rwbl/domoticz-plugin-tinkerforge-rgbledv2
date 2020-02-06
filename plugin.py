@@ -56,7 +56,7 @@ import urllib.request
 # Amend the import path to enable using the Tinkerforge libraries
 # Alternate (ensure to update in case newer Python API bindings):
 # create folder tinkerforge and copy the binding content, i.e.
-# /home/pi/domoticz/plugins/TFRGBLEDV2
+# /home/pi/domoticz/plugins/TFAMBIENTLIGHTV2
 from os import path
 import sys
 sys.path
