@@ -35,9 +35,6 @@ This is handled by function _SetBrickletColor(self, Unit, Command, Level)_.
 The Domoticz device is updated depending the unit (i.e. selected color) by settig nValue to 0 (=Off) or 1 (=On) and sValue to the level (0-255 as string!).
 The bricklet device object is set by executing the API function set_rgb_value with the color parameter r,g,b - which are set prior this function.
 
-ADD OVERVIEW PIC
-![domoticz-plugin-tinkerforge-rgbledv2-o](...)
-
 Additional info **domoticz-plugin-tinkerforge-rgbledv2.pdf**.
 
 ## Hardware Parts
@@ -159,8 +156,6 @@ In the GUI Setup > Hardware add the new hardware "Tinkerforge IO-4 Bricklet 2.0"
 
 ## Add Hardware - Check the Domoticz Log
 After adding,ensure to check the Domoticz Log (GUI Setup > Log)
-
-![domoticz-plugin-tinkerforge-rgbledv2-h](...png)
 
 ## Example Domoticz Log Entry Adding Hardware with Debug=True
 ```
