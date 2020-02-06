@@ -1,4 +1,4 @@
-# Changelog domoticz-plugin-tinkerforge-io4v2
+# Changelog domoticz-plugin-tinkerforge-gbledv2
 
-### v1.0.0 (Build 20200204)
+### v1.0.0 (Build 20200206)
 * NEW: First version published.
