@@ -1,4 +1,4 @@
-# Changelog domoticz-plugin-tinkerforge-rgbledv2
+# ToDo domoticz-plugin-tinkerforge-rgbledv2
   
 ### NEW: Recognise disconnecting the Master brick
 If the master brick is disconnected from the USB port, the plugin does not recognize that.
