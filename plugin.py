@@ -56,7 +56,7 @@ import urllib.request
 # Amend the import path to enable using the Tinkerforge libraries
 # Alternate (ensure to update in case newer Python API bindings):
 # create folder tinkerforge and copy the binding content, i.e.
-# /home/pi/domoticz/plugins/TFAMBIENTLIGHTV2
+# /home/pi/domoticz/plugins/TFRGBLEDV2
 from os import path
 import sys
 sys.path
@@ -82,10 +82,10 @@ class BasePlugin:
     def __init__(self):
         self.Debug = False
         
-        # RGB Device Colors inital 0
-        self.r = 0
-        self.g = 0
-        self.b = 0
+        # RGB Device Colors with initial values
+        self.r = 9
+        self.g = 8
+        self.b = 58
 
         # NOT USED = PLACEHOLDER
         # The Domoticz heartbeat is set to every 10 seconds. Do not use a higher value than 30 as Domoticz message "Error: hardware (N) thread seems to have ended unexpectedly"
@@ -105,28 +105,33 @@ class BasePlugin:
             Domoticz.Debugging(1)
             DumpConfigToLog()
 
-        if (len(Devices) == 0):
-            # Create new devices for the Hardware = each channel is a dimmer switch
-            Domoticz.Debug("Creating new Devices")
-            # Parameter Type 244=Light/Switch, Subtype 73=Switch, Switchtype 7=Dimmer
-
-            Domoticz.Device(Name="RGB Switch Red", Unit=UNITCHANNELR, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
-            Domoticz.Debug("Device created: "+Devices[UNITCHANNELR].Name)
-
-            Domoticz.Device(Name="RGB Switch Green", Unit=UNITCHANNELG, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
-            Domoticz.Debug("Device created: "+Devices[UNITCHANNELG].Name)
-
-            Domoticz.Device(Name="RGB Switch Blue", Unit=UNITCHANNELB, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
-            Domoticz.Debug("Device created: "+Devices[UNITCHANNELB].Name)
-
         # Get the UID of the bricklet
         if len(Parameters["Mode1"]) == 0:
             StatusToLog(STATUSLEVELERROR, "[ERROR] Device UID not set. Get the UID using the Brick Viewer.")
             return
 
-        # Set the bricklet configuration
-        SetBrickletConfiguration()
+        # Create new devices for the Hardware = each channel is a dimmer switch; set the initial color
+        if (len(Devices) == 0):
+            Domoticz.Debug("Creating new Devices")
+            # Parameter Type 244=Light/Switch, Subtype 73=Switch, Switchtype 7=Dimmer
 
+            Domoticz.Device(Name="Switch Red", Unit=UNITCHANNELR, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
+            Devices[UNITCHANNELR].Update(nValue=1,sValue=str(self.r))
+            Domoticz.Debug("Device created: "+Devices[UNITCHANNELR].Name)
+
+            Domoticz.Device(Name="Switch Green", Unit=UNITCHANNELG, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
+            Devices[UNITCHANNELG].Update(nValue=1,sValue=str(self.g))
+            Domoticz.Debug("Device created: "+Devices[UNITCHANNELG].Name)
+
+            Domoticz.Device(Name="Switch Blue", Unit=UNITCHANNELB, Type=244, Subtype=73, Switchtype=7, Used=1).Create()
+            Devices[UNITCHANNELB].Update(nValue=1,sValue=str(self.b))
+            Domoticz.Debug("Device created: "+Devices[UNITCHANNELB].Name)
+
+        # Set the bricklet configuration
+        SetBrickletConfiguration(self)
+        # Set the color at start - either with inital value or from the current dimmer switches set
+        SetBrickletRGB(self, int(Devices[UNITCHANNELR].sValue), int(Devices[UNITCHANNELG].sValue), int(Devices[UNITCHANNELB].sValue) )
+        
     def onStop(self):
         Domoticz.Debug("Plugin is stopping.")
 
@@ -210,7 +215,7 @@ def onHeartbeat():
 
 # Set the bricklet configuration
 # Status LED = OFF
-def SetBrickletConfiguration():
+def SetBrickletConfiguration(self):
     Domoticz.Debug("SetBrickletConfiguration")
     try:
         # Create IP connection
@@ -236,7 +241,6 @@ def SetBrickletConfiguration():
 def SetBrickletColor(self, Unit, Command, Level):
     Domoticz.Debug("SetBrickletColor: Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level) + ", ID="+str(Devices[Unit].ID) )
     SetCommand = str(Command)
-    Level = MapRange(Level,0,100,0,255)
     try:
         # Create IP connection
         ipConn = IPConnection()
@@ -258,13 +262,50 @@ def SetBrickletColor(self, Unit, Command, Level):
         if Unit == UNITCHANNELB:
             self.b = Level
             Devices[UNITCHANNELB].Update(nValue=state,sValue=str(self.b))
-        # Update the tinkerforge rgbled device
-        rgbDev.set_rgb_value(self.r,self.g,self.b)
+        # Update the tinkerforge rgbled device with mapped values
+        rm = MapRange(self.r,0,100,0,255)
+        gm = MapRange(self.g,0,100,0,255)
+        bm = MapRange(self.b,0,100,0,255)
+        rgbDev.set_rgb_value(rm,gm,bm)
+        Domoticz.Debug("Bricklet Update: R=%d,G=%d,B=%d" % (rm,gm,bm))
         # Disconnect
         ipConn.disconnect()
         Domoticz.Debug("SetBrickletColor: OK")
     except:
         Domoticz.Error("[ERROR] SetBrickletColor failed. Check bricklet.")
+    return
+
+# Set the color of the RGB LED bricklet
+# The self parameter is used to ensure all 3 RGB colors are captured and used to set the color.
+# The color level is given via the Domoticz Switch Type Dimmer in a range 0-100%. The RGB LED has a range 0-255. 
+def SetBrickletRGB(self, r, g, b):
+    Domoticz.Debug("SetBrickletRGB: R=%d,G=%d,B=%d" % (r,g,b))
+    try:
+        # Create IP connection
+        ipConn = IPConnection()
+        # Create device object
+        rgbDev = BrickletRGBLEDV2(Parameters["Mode1"], ipConn)
+        # Connect to brickd using Host and Port
+        ipConn.connect(Parameters["Address"], int(Parameters["Port"]))
+        # Assign the color and update the domoticz dimmer switches
+        state = 1
+        self.r = r
+        Devices[UNITCHANNELR].Update(nValue=state,sValue=str(self.r))
+        self.g = g
+        Devices[UNITCHANNELG].Update(nValue=state,sValue=str(self.g))
+        self.b = b
+        Devices[UNITCHANNELB].Update(nValue=state,sValue=str(self.b))
+        # Update the tinkerforge rgbled device with mapped values
+        rm = MapRange(self.r,0,100,0,255)
+        gm = MapRange(self.g,0,100,0,255)
+        bm = MapRange(self.b,0,100,0,255)
+        Domoticz.Debug("Bricklet Update: R=%d,G=%d,B=%d" % (rm,gm,bm))
+        rgbDev.set_rgb_value(rm,gm,bm)
+        # Disconnect
+        ipConn.disconnect()
+        Domoticz.Debug("SetBrickletRGB: OK")
+    except:
+        Domoticz.Error("[ERROR] SetBrickletRGB failed. Check bricklet.")
     return
 
 # Generic helper functions
