@@ -2,10 +2,9 @@
 # @author Robert W.B. Linn
 # @version 1.0.0 (Build 20200206)
 #
-# NOTE: after every change run
-# sudo chmod +x *.*                      
+# NOTE: after every change restart Domoticz & check the Domoticz Log
 # sudo systemctl restart domoticz.service OR sudo service domoticz.sh restart
-#
+# REFERENCES:
 # Domoticz Python Plugin Development Documentation:
 # https://www.domoticz.com/wiki/Developing_a_Python_plugin
 # Tinkerforge RGB LED Bricklet 2.0 Documentation:
@@ -15,7 +14,7 @@
 # https://www.tinkerforge.com/en/doc/Software/Bricklets/RGBLEDV2_Bricklet_Python.html#rgb-led-v2-bricklet-python-api
 
 """
-<plugin key="TFRGBLEDV2" name="Tinkerforge RGB LED Bricklet 2.0" author="rwbL" version="1.0.0">
+<plugin key="tfrgbledv2" name="Tinkerforge RGB LED Bricklet 2.0" author="rwbL" version="1.0.0">
     <description>
         <h2>Tinkerforge RGB LED Bricklet 2.0</h2><br/>
         This bricklet enables to control an RGB LED. Each of the three channels (Red, Green, Blue) can be set.<br/>
@@ -56,7 +55,7 @@ import urllib.request
 # Amend the import path to enable using the Tinkerforge libraries
 # Alternate (ensure to update in case newer Python API bindings):
 # create folder tinkerforge and copy the binding content, i.e.
-# /home/pi/domoticz/plugins/TFRGBLEDV2
+# /home/pi/domoticz/plugins/tfrgbledv2
 from os import path
 import sys
 sys.path

@@ -73,9 +73,9 @@ This is required to add the new hardware with its device and monitor if the plug
 It is imporant, that the GUI > Setup > Hardware accepts new devices!
 
 ## Create folder
-The folder name is the same as the key property of the plugin (i.e. plugin key="TFRGBLEDV2").
+The folder name is the same as the key property of the plugin (i.e. plugin key="tfrgbledv2").
 ```
-cd /home/pi/domoticz/plugins/TFRGBLEDV2
+cd /home/pi/domoticz/plugins/tfrgbledv2
 ```
 
 ## Create the plugin
@@ -132,7 +132,7 @@ Ensure to update the files in case of newer Tinkerforge Python Bindings.
 
 ## Make plugin.py executable
 ```
-cd /home/pi/domoticz/plugins/TFRGBLEDV2
+cd /home/pi/domoticz/plugins/tfrgbledv2
 chmod +x plugin.py
 ```
 
@@ -161,7 +161,7 @@ After adding,ensure to check the Domoticz Log (GUI Setup > Log)
 ```
 2020-02-05 19:01:38.581 (RGBLED) Debug logging mask set to: PYTHON PLUGIN QUEUE IMAGE DEVICE CONNECTION MESSAGE ALL 
 2020-02-05 19:01:38.581 (RGBLED) 'HardwareID':'7' 
-2020-02-05 19:01:38.581 (RGBLED) 'HomeFolder':'/home/pi/domoticz/plugins/TFRGBLEDV2/' 
+2020-02-05 19:01:38.581 (RGBLED) 'HomeFolder':'/home/pi/domoticz/plugins/tfrgbledv2/' 
 2020-02-05 19:01:38.581 (RGBLED) 'StartupFolder':'/home/pi/domoticz/' 
 2020-02-05 19:01:38.581 (RGBLED) 'UserDataFolder':'/home/pi/domoticz/' 
 2020-02-05 19:01:38.581 (RGBLED) 'Database':'/home/pi/domoticz/domoticz.db' 
@@ -171,7 +171,7 @@ After adding,ensure to check the Domoticz Log (GUI Setup > Log)
 2020-02-05 19:01:38.581 (RGBLED) 'Name':'RGBLED' 
 2020-02-05 19:01:38.581 (RGBLED) 'Address':'127.0.0.1' 
 2020-02-05 19:01:38.581 (RGBLED) 'Port':'4223' 
-2020-02-05 19:01:38.581 (RGBLED) 'Key':'TFRGBLEDV2' 
+2020-02-05 19:01:38.581 (RGBLED) 'Key':'tfrgbledv2' 
 2020-02-05 19:01:38.581 (RGBLED) 'Mode1':'Jng' 
 2020-02-05 19:01:38.581 (RGBLED) 'Mode6':'Debug' 
 2020-02-05 19:01:38.581 (RGBLED) 'DomoticzVersion':'4.11670' 
